@@ -1,8 +1,83 @@
 <!DOCTYPE html>
-<html>
-<head><title>Student Dashboard</title></head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+</head>
 <body>
-    <h2>Student Dashboard</h2>
-    <p>Welcome, {{ current_user.first_name }}!</p>
+    <h2>Welcome, {{ current_user.first_name }}!</h2>
+
+    <!-- Tab Buttons -->
+    <button onclick="showTab('my-classes')">My Classes</button>
+    <button onclick="showTab('add-classes')">Add Classes</button>
+
+    <!-- My Classes Tab -->
+    <div id="my-classes">
+        <h3>My Classes</h3>
+        <table border="1">
+            <tr>
+                <th>Code</th>
+                <th>Teacher</th>
+                <th>Meeting Time</th>
+                <th>Enrolled</th>
+                <th>Grade</th>
+            </tr>
+            {% for enrollment in enrollments %}
+            <tr>
+                <td>{{ enrollment.course.code }}</td>
+                <td>{{ enrollment.course.teacher.first_name }} {{ enrollment.course.teacher.last_name }}</td>
+                <td>{{ enrollment.course.meeting_time }}</td>
+                <td>{{ enrollment.course.enrollment_count }} / {{ enrollment.course.capacity }}</td>
+                <td>{{ enrollment.grade or "N/A" }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Add Classes Tab -->
+    <div id="add-classes" style="display:none">
+        <h3>Add Classes</h3>
+        <table border="1">
+            <tr>
+                <th>Code</th>
+                <th>Teacher</th>
+                <th>Meeting Time</th>
+                <th>Enrolled</th>
+                <th>Add/Drop</th>
+            </tr>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.code }}</td>
+                <td>{{ course.name }}</td>
+                <td>{{ course.teacher.first_name }} {{ course.teacher.last_name }}</td>
+                <td>{{ course.meeting_time }}</td>
+                <td>{{ course.enrollment_count }} / {{ course.capacity }}</td>
+                <td>
+                    {% set enrolled = enrollments | selectattr("course_id", "equalto", course.id) | list %}
+                    {% if enrolled %}
+                        <form method="POST" action="/student/drop/{{ course.id }}">
+                            <button type="submit">Drop</button>
+                        </form>
+                    {% elif course.enrollment_count >= course.capacity %}
+                        <button disabled>Full</button>
+                    {% else %}
+                        <form method="POST" action="/student/enroll/{{ course.id }}">
+                            <button type="submit">Enroll</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            document.getElementById('my-classes').style.display = 'none';
+            document.getElementById('add-classes').style.display = 'none';
+            document.getElementById(tab).style.display = 'block';
+        }
+    </script>
+
 </body>
 </html>
