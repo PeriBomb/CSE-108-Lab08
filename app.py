@@ -86,13 +86,13 @@ def student_enroll(id):
     db.session.commit()
     return redirect(url_for('student_dashboard'))
 
-# @app.route("/student/drop/<int:id>?", methods=['POST'])
-# @login_required
-# def student_drop(id):
-#     enrollment = Enrollment.query.filter_by(student_id=current_user.id, course_id=id, status="active").first()
-#     db.session.delete(enrollment)
-#     db.session.commit()
-#     return redirect(url_for('student_dashboard'))
+@app.route("/student/drop/<int:id>", methods=['POST'])
+@login_required
+def student_drop(id):
+    enrollment = Enrollment.query.filter_by(student_id=current_user.id, course_id=id, status="active").first()
+    db.session.delete(enrollment)
+    db.session.commit()
+    return redirect(url_for('student_dashboard'))
 
 @app.route("/teacher/dashboard")
 @login_required

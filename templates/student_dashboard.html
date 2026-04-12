@@ -48,7 +48,6 @@
             {% for course in courses %}
             <tr>
                 <td>{{ course.code }}</td>
-                <td>{{ course.name }}</td>
                 <td>{{ course.teacher.first_name }} {{ course.teacher.last_name }}</td>
                 <td>{{ course.meeting_time }}</td>
                 <td>{{ course.enrollment_count }} / {{ course.capacity }}</td>
