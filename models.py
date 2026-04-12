@@ -1,8 +1,6 @@
 from extensions import db
 from flask_login import UserMixin
 
-
-
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
@@ -23,17 +21,18 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return f"{self.first_name} {self.last_name}"
 
-
 class Course(db.Model):
     __tablename__ = "courses"
 
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(20), unique=True, nullable=False)
-    name = db.Column(db.String(120), nullable=False)
     meeting_time = db.Column(db.String(50))
     capacity = db.Column(db.Integer, nullable=False, default=30)
     teacher_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     teacher = db.relationship("User", backref = "taught_courses")
+    @property
+    def enrollment_count(self):
+        return len([e for e in self.enrollments if e.status == "active"])
 
 class Enrollment(db.Model):
     __tablename__ = "enrollments"
