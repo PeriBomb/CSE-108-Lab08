@@ -1,26 +1,49 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
-from models import User, Course, Enrollment
-from extensions import db
+from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from flask_login import LoginManager, login_required, current_user, login_user, logout_user
-from flask import Flask, render_template, redirect, url_for, request, flash
+from wtforms import PasswordField
+from extensions import db
+from models import User, Course, Enrollment
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECRET_KEY"] = "dev-secret-key"
+
 db.init_app(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
-app.config["SECRET_KEY"] = "dev-secret-key"
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class UserAdminView(ModelView):
+    column_exclude_list = ["password"]
+    form_excluded_columns = ["password"]
+    form_columns = ["first_name", "last_name", "username", "password_input", "email", "role"]
+    form_extra_fields = {
+        "password_input": PasswordField("Password")
+    }
+    def on_model_change(self, form, model, is_created):
+        if form.password_input.data:
+            model.set_password(form.password_input.data)
+
+class CourseAdminView(ModelView):
+    form_args = {
+        "teacher": {
+            "query_factory": lambda: User.query.filter_by(role="teacher").all()
+        }
+    }
 
 admin = Admin(app, name="Lab-08 Admin View")
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Course, db.session))
+admin.add_view(UserAdminView(User, db.session))
+admin.add_view(CourseAdminView(Course, db.session))
 admin.add_view(ModelView(Enrollment, db.session))
+
 
 
 @app.route("/")
@@ -51,7 +74,10 @@ def login():
 @app.route("/student/dashboard")
 @login_required
 def student_dashboard():
-    return render_template("student_dashboard.html")
+    enrollments = Enrollment.query.filter_by(student_id=current_user.id, status="active").all()
+    courses = Course.query.all()
+    return render_template("student_dashboard.html", enrollments=enrollments, courses=courses)
+
 
 @app.route("/teacher/dashboard")
 @login_required

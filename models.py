@@ -19,6 +19,10 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         from werkzeug.security import check_password_hash
         return check_password_hash(self.password, password)
+    
+    def __repr__(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class Course(db.Model):
     __tablename__ = "courses"
@@ -26,7 +30,7 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(20), unique=True, nullable=False)
     name = db.Column(db.String(120), nullable=False)
-    description = db.Column(db.Text)
+    meeting_time = db.Column(db.String(50))
     capacity = db.Column(db.Integer, nullable=False, default=30)
     teacher_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     teacher = db.relationship("User", backref = "taught_courses")
