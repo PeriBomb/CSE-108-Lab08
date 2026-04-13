@@ -97,7 +97,15 @@ def student_drop(id):
 @app.route("/teacher/dashboard")
 @login_required
 def teacher_dashboard():
-    return render_template("teacher_dashboard.html")
+    courses = Course.query.filter_by(teacher_id=current_user.id).all()
+    course_data = []
+    for course in courses:
+        enrollments = Enrollment.query.filter_by(course_id=course.id, status="active").all()
+        course_data.append({
+            "course": course,
+            "enrollments": enrollments
+        })
+    return render_template("teacher_dashboard.html", course_data=course_data)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -107,6 +115,6 @@ def load_user(user_id):
 def logout():
     logout_user()
     return redirect(url_for("login"))
-    
+
 if __name__ == "__main__":
     app.run(debug=True)
