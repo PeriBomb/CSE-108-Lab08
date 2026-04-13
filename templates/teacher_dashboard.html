@@ -2,7 +2,10 @@
 <html>
 <head><title>Teacher Dashboard</title></head>
 <body>
-    <h2>Student Dashboard</h2>
+    <h2>Teacher Dashboard</h2>
+    <form action="/logout" method="GET" style="display:inline;">
+        <button type="submit">Logout</button>
+    </form>
     <p>Welcome, {{ current_user.first_name }}!</p>
 </body>
 </html>
