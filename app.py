@@ -107,6 +107,20 @@ def teacher_dashboard():
         })
     return render_template("teacher_dashboard.html", course_data=course_data)
 
+@app.route("/teacher/update_grade/<int:enrollment_id>", methods=['POST'])
+@login_required
+def update_grade(enrollment_id):
+    enrollment = Enrollment.query.get_or_404(enrollment_id)
+    if enrollment.course.teacher_id != current_user.id:
+        flash("Unauthorized action")
+        return redirect(url_for('teacher_dashboard'))
+
+    new_grade = request.form.get("grade")
+    enrollment.grade = new_grade
+    db.session.commit()
+    
+    return redirect(url_for('teacher_dashboard'))
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))

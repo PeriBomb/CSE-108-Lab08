@@ -18,60 +18,64 @@
     <!-- My Classes Tab -->
     <div id="my-classes">
         <h3>My Classes</h3>
-        <table border="1">
-            <tr>
-                <th>Code</th>
-                <th>Teacher</th>
-                <th>Meeting Time</th>
-                <th>Enrolled</th>
-                <th>Grade</th>
-            </tr>
-            {% for enrollment in enrollments %}
-            <tr>
-                <td>{{ enrollment.course.code }}</td>
-                <td>{{ enrollment.course.teacher.first_name }} {{ enrollment.course.teacher.last_name }}</td>
-                <td>{{ enrollment.course.meeting_time }}</td>
-                <td>{{ enrollment.course.enrollment_count }} / {{ enrollment.course.capacity }}</td>
-                <td>{{ enrollment.grade or "N/A" }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+        <section>
+            <table border="1">
+                <tr>
+                    <th>Code</th>
+                    <th>Teacher</th>
+                    <th>Meeting Time</th>
+                    <th>Enrolled</th>
+                    <th>Grade</th>
+                </tr>
+                {% for enrollment in enrollments %}
+                <tr>
+                    <td>{{ enrollment.course.code }}</td>
+                    <td>{{ enrollment.course.teacher.first_name }} {{ enrollment.course.teacher.last_name }}</td>
+                    <td>{{ enrollment.course.meeting_time }}</td>
+                    <td>{{ enrollment.course.enrollment_count }} / {{ enrollment.course.capacity }}</td>
+                    <td>{{ enrollment.grade or "N/A" }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
     </div>
 
     <!-- Add Classes Tab -->
     <div id="add-classes" style="display:none">
         <h3>Add Classes</h3>
-        <table border="1">
-            <tr>
-                <th>Code</th>
-                <th>Teacher</th>
-                <th>Meeting Time</th>
-                <th>Enrolled</th>
-                <th>Add/Drop</th>
-            </tr>
-            {% for course in courses %}
-            <tr>
-                <td>{{ course.code }}</td>
-                <td>{{ course.teacher.first_name }} {{ course.teacher.last_name }}</td>
-                <td>{{ course.meeting_time }}</td>
-                <td>{{ course.enrollment_count }} / {{ course.capacity }}</td>
-                <td>
-                    {% set enrolled = enrollments | selectattr("course_id", "equalto", course.id) | list %}
-                    {% if enrolled %}
-                        <form method="POST" action="/student/drop/{{ course.id }}">
-                            <button type="submit">Drop</button>
-                        </form>
-                    {% elif course.enrollment_count >= course.capacity %}
-                        <button disabled>Full</button>
-                    {% else %}
-                        <form method="POST" action="/student/enroll/{{ course.id }}">
-                            <button type="submit">Enroll</button>
-                        </form>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+        <section>
+            <table border="1">
+                <tr>
+                    <th>Code</th>
+                    <th>Teacher</th>
+                    <th>Meeting Time</th>
+                    <th>Enrolled</th>
+                    <th>Add/Drop</th>
+                </tr>
+                {% for course in courses %}
+                <tr>
+                    <td>{{ course.code }}</td>
+                    <td>{{ course.teacher.first_name }} {{ course.teacher.last_name }}</td>
+                    <td>{{ course.meeting_time }}</td>
+                    <td>{{ course.enrollment_count }} / {{ course.capacity }}</td>
+                    <td>
+                        {% set enrolled = enrollments | selectattr("course_id", "equalto", course.id) | list %}
+                        {% if enrolled %}
+                            <form method="POST" action="/student/drop/{{ course.id }}">
+                                <button type="submit">Drop</button>
+                            </form>
+                        {% elif course.enrollment_count >= course.capacity %}
+                            <button disabled>Full</button>
+                        {% else %}
+                            <form method="POST" action="/student/enroll/{{ course.id }}">
+                                <button type="submit">Enroll</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
     </div>
 
     <script>
