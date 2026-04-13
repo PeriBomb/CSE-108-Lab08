@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html>
-<head><title>Teacher Dashboard</title></head>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Grades</title>
+        <link rel="stylesheet" href="/static/styles.css">
+        <title>Teacher Dashboard</title>
+    </head>
 <body>
     <h2>Teacher Dashboard</h2>
     <form action="/logout" method="GET" style="display:inline;">
         <button type="submit">Logout</button>
     </form>
     <p>Welcome, {{ current_user.first_name }}!</p>
+    <button onclick="showTab('my-classes')">My Classes</button>
+    <button onclick="showTab('add-classes')">Add Classes</button>
 </body>
 </html>
