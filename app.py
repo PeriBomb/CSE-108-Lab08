@@ -116,6 +116,16 @@ def update_grade(enrollment_id):
         return redirect(url_for('teacher_dashboard'))
 
     new_grade = request.form.get("grade")
+    try:
+        grade_value = int(new_grade)
+    except (TypeError, ValueError):
+        flash("Grade must be a number between 0 and 100")
+        return redirect(url_for('teacher_dashboard'))
+
+    if grade_value < 0 or grade_value > 100:
+        flash("Grade must be a number between 0 and 100")
+        return redirect(url_for('teacher_dashboard'))
+        
     enrollment.grade = new_grade
     db.session.commit()
     

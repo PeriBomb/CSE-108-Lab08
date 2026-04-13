@@ -32,7 +32,7 @@
                     <td>{{ enrollment.grade or "N/A" }}</td>
                     <td>
                         <form method="POST" action="/teacher/update_grade/{{ enrollment.id }}">
-                            <input type="text" name="grade" placeholder="Enter grade">
+                            <input type="number" name="grade" min="0" max="100" placeholder="Enter grade">
                             <button type="submit">Update</button>
                         </form>
                     </td>
