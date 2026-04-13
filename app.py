@@ -78,6 +78,21 @@ def student_dashboard():
     courses = Course.query.all()
     return render_template("student_dashboard.html", enrollments=enrollments, courses=courses)
 
+@app.route("/student/enroll/<int:id>", methods=['POST'])
+@login_required
+def student_enroll(id):
+    enrollment = Enrollment(student_id=current_user.id, course_id=id, grade="100", status="active")
+    db.session.add(enrollment)
+    db.session.commit()
+    return redirect(url_for('student_dashboard'))
+
+@app.route("/student/drop/<int:id>", methods=['POST'])
+@login_required
+def student_drop(id):
+    enrollment = Enrollment.query.filter_by(student_id=current_user.id, course_id=id, status="active").first()
+    db.session.delete(enrollment)
+    db.session.commit()
+    return redirect(url_for('student_dashboard'))
 
 @app.route("/teacher/dashboard")
 @login_required
