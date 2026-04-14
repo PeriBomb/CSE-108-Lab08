@@ -77,6 +77,7 @@ button[disabled]:hover {
 }
 table {
     margin-top:15px;
+    margin: 15px auto;
     border-collapse:collapse;
     width:70%;
     background: #ffeaff;
